@@ -1,0 +1,41 @@
+/*High Level CSS*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/*entire html of popup*/
+body {
+  background-color: #FDF5E6;
+  width: 20em;
+  height: 20em;
+}
+
+/*color scheme for dark mode
+.dark-mode {
+  background-color: #121212 !important;
+  color: #E0E0E0 !important;
+}
+*/
+
+/*content of popup, includes top buttons*/
+#content {
+  width: 20em;
+  height: auto;
+}
+
+/*content within each tab*/
+.tab-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  text-align: center;
+}
+
+.tab-button-container{
+  height: 2em;
+}

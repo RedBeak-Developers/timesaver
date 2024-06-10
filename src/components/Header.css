@@ -1,0 +1,24 @@
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #b0e0e6;
+}
+
+.header-title {
+  flex: 1;
+  text-align: center;
+  font-size: 24px;
+  color: #333;
+}
+
+.header-image-left{
+  width: 48px;
+  height: 48px;
+}
+
+.header-image-right{
+  width: 40px;
+  height: 40px;
+}
