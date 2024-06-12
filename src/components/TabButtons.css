@@ -1,0 +1,22 @@
+/*css for active nav button*/
+.tabs{
+  height: 100%;
+  width: 100%;
+  background-color: #b0e0e6;
+}
+.active{
+  margin: none;
+  padding: none;
+  border-radius: 5px;
+  background-color: blueviolet;
+  height: 100%;
+  width: 33%;
+}
+
+.inactive{
+  margin: none;
+  padding: none;
+  background-color: #b0e0e6;
+  height: 100%;
+  width: 33%;
+}

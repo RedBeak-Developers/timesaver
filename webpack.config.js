@@ -3,19 +3,17 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: './src/popupIndex.js', // Entry point for your popup script
+  entry: './src/popupIndex.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'popup.bundle.js' // Output bundle
+    filename: 'popup.bundle.js'
   },
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader'
-        }
+        use: 'babel-loader'
       },
       {
         test: /\.css$/,
@@ -40,9 +38,9 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './public/popupIndex.html', // Use popupIndex.html as the template
-      filename: 'popup.html', // Output filename
-      chunks: ['popupIndex'] // Ensure only the popup chunk is included
+      template: './public/popupIndex.html',
+      filename: 'popup.html',
+      chunks: ['popupIndex']
     }),
     new CopyWebpackPlugin({
       patterns: [
@@ -52,13 +50,13 @@ module.exports = {
   ],
   devServer: {
     static: {
-      directory: path.join(__dirname, 'dist'), // Serve from 'dist' directory
+      directory: path.join(__dirname, 'dist'),
     },
     compress: true,
     port: 9000,
     open: true,
     historyApiFallback: {
-      index: '/popup.html' // Ensure DevServer serves 'popup.html'
+      index: '/popup.html'
     }
   }
 };
