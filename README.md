@@ -2,7 +2,7 @@
 
 ## Home Page
 
-Basic Insights, donation, premium, awards, day streak
+Basic Insights, donation, premium, awards, day streak, usage statistics, quotes, rewards/encouragement/ paid version will have more
 
 ## Focus Page
 
