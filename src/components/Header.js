@@ -5,16 +5,7 @@ import settings from '../assets/images/settings.png';
 
 function Header(){
   function openWebsite(){
-    let websiteURL = process.env.REACT_APP_WEBSITE_URL;
-    websiteURL = "localhost:3000";
-    console.log(websiteURL);
-    if (typeof chrome !== 'undefined' && chrome.tabs) {
-      chrome.tabs.create({ websiteURL });
-    } 
-    else {
-      window.open(websiteURL, '_blank');
-    }
-    console.log("opened website");
+    
   }
   
   return (
