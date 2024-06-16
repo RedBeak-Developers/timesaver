@@ -1,35 +1,28 @@
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from '../reducers/index';
-import { loadWebsites } from '../actions';
+import { loadTimerSettings } from '../actions/timerActions';
+import mockChrome from '../utils/mockChrome';
+
+const chrome = typeof window.chrome !== 'undefined' ? window.chrome : mockChrome;
 
 const store = configureStore({
   reducer: rootReducer,
 });
 
+// Load timer settings from chrome.storage on startup
+chrome.storage.sync.get(['focusTime', 'breakTime'], (result) => {
+  const focusTime = result.focusTime || 25;
+  const breakTime = result.breakTime || 5;
+  store.dispatch(loadTimerSettings(focusTime, breakTime));
+});
 
-// Load websites from chrome.storage on startup
-if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
-  chrome.storage.sync.get(['websites'], (result) => {
-    if (result.websites) {
-      console.log('Websites loaded from storage:', result.websites);
-      store.dispatch(loadWebsites(result.websites));
-    } else {
-      console.log('No websites found in storage.');
-    }
-  });
-} else {
-  console.log('Chrome storage is not available.');
-}
-
-// Save websites to chrome.storage whenever they change
+// Save timer settings to chrome.storage whenever they change
 store.subscribe(() => {
   const state = store.getState();
-  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
-    console.log('Saving websites to storage:', state.websites.websites);
-    chrome.storage.sync.set({ websites: state.websites.websites });
-  } else {
-    console.log('Chrome storage is not available.');
-  }
+  chrome.storage.sync.set({
+    focusTime: state.timer.focusTime / 60,
+    breakTime: state.timer.breakTime / 60,
+  });
 });
 
 export default store;

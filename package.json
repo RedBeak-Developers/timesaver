@@ -73,7 +73,6 @@
       "webextensions": true
     },
     "globals": {
-      "chrome": "readonly"
     }
   }
 }

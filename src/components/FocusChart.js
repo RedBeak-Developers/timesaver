@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Chart from 'chart.js/auto';
+import './FocusChart.css';
+import mockChrome from '../utils/mockChrome';
+
+const chrome = typeof window.chrome !== 'undefined' ? window.chrome : mockChrome;
 
 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -58,7 +62,7 @@ const FocusChart = () => {
 
   return (
     <div>
-      <h2>Focus Time by Day of the Week</h2>
+      <h2 id='graph-title' >Focus Time by Day of the Week</h2>
       <canvas id="focusChart" width="400" height="400"></canvas>
     </div>
   );
