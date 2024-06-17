@@ -8,7 +8,7 @@ import timerReducer from './timerReducer';
 const rootReducer = combineReducers({
   tab: tabReducer,
   websites: websitesReducer,
-  timer: timerReducer
+  timer: timerReducer,
   //continue adding reducers here
   
 });

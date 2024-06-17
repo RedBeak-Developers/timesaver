@@ -1,6 +1,8 @@
+import { startTimer, stopTimer, getTimerState } from './timerLogic';
+
 class MockChromeStorage {
   constructor() {
-    this.storage = {};
+    this.storage = JSON.parse(localStorage.getItem('mockChromeStorage')) || {};
   }
 
   get(keys, callback) {
@@ -21,6 +23,13 @@ class MockChromeStorage {
     Object.keys(items).forEach((key) => {
       this.storage[key] = items[key];
     });
+    localStorage.setItem('mockChromeStorage', JSON.stringify(this.storage));
+    if (callback) callback();
+  }
+
+  clear(callback) {
+    this.storage = {};
+    localStorage.removeItem('mockChromeStorage');
     if (callback) callback();
   }
 }
@@ -54,55 +63,14 @@ const mockChrome = {
   runtime: mockChromeRuntime,
 };
 
-let timerInterval;
-let timerState = {
-  focusTime: 25 * 60,
-  breakTime: 5 * 60,
-  timeLeft: 25 * 60,
-  isRunning: false,
-  isFocus: true,
-};
-
-mockChromeRuntime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === 'startTimer') {
-    timerState.focusTime = request.focusTime * 60;
-    timerState.breakTime = request.breakTime * 60;
-    timerState.timeLeft = timerState.focusTime;
-    timerState.isRunning = true;
-    timerState.isFocus = true;
-
-    startTimer();
-    sendResponse({ status: 'Timer started' });
-  } else if (request.action === 'stopTimer') {
-    stopTimer();
-    sendResponse({ status: 'Timer stopped' });
+mockChrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'startFocus') {
+    startTimer(mockChrome, request.focusTime, request.breakTime, sendResponse);
+  } else if (request.action === 'stopFocus') {
+    stopTimer(mockChrome, sendResponse);
   } else if (request.action === 'getTimerState') {
-    sendResponse(timerState);
+    getTimerState(sendResponse);
   }
 });
-
-function startTimer() {
-  if (timerInterval) {
-    clearInterval(timerInterval);
-  }
-  timerInterval = setInterval(() => {
-    tickTimer();
-  }, 1000);
-}
-
-function stopTimer() {
-  clearInterval(timerInterval);
-  timerState.isRunning = false;
-}
-
-function tickTimer() {
-  if (timerState.timeLeft <= 0) {
-    timerState.isFocus = !timerState.isFocus;
-    timerState.timeLeft = timerState.isFocus ? timerState.focusTime : timerState.breakTime;
-  } else {
-    timerState.timeLeft -= 1;
-  }
-  mockChrome.storage.local.set({ timerState });
-}
 
 export default mockChrome;

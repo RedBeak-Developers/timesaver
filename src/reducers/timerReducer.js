@@ -1,9 +1,15 @@
-import { START_TIMER, STOP_TIMER, TICK_TIMER, LOAD_TIMER_SETTINGS, SET_TIMER_SETTINGS } from '../actions/timerActions';
+import {
+  START_TIMER,
+  STOP_TIMER,
+  TICK_TIMER,
+  LOAD_TIMER_SETTINGS,
+  UPDATE_TIMER,
+} from '../actions/timerActions';
 
 const initialState = {
-  focusTime: 25 * 60,
-  breakTime: 5 * 60,
-  timeLeft: 25 * 60,
+  focusTime: 25 * 60, // in seconds
+  breakTime: 5 * 60,  // in seconds
+  timeLeft: 25 * 60,  // in seconds
   isRunning: false,
   isFocus: true,
 };
@@ -31,11 +37,12 @@ const timerReducer = (state = initialState, action) => {
           isFocus: !state.isFocus,
           timeLeft: state.isFocus ? state.breakTime : state.focusTime,
         };
+      } else {
+        return {
+          ...state,
+          timeLeft: state.timeLeft - 1,
+        };
       }
-      return {
-        ...state,
-        timeLeft: state.timeLeft - 1,
-      };
     case LOAD_TIMER_SETTINGS:
       return {
         ...state,
@@ -43,11 +50,10 @@ const timerReducer = (state = initialState, action) => {
         breakTime: action.breakTime,
         timeLeft: action.focusTime,
       };
-    case SET_TIMER_SETTINGS:
+    case UPDATE_TIMER:
       return {
         ...state,
-        focusTime: action.focusTime,
-        breakTime: action.breakTime,
+        ...action.timerState,
       };
     default:
       return state;
