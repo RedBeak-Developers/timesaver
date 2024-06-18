@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
+import { thunk } from 'redux-thunk';
 import rootReducer from '../reducers/index';
 import { loadTimerSettings, updateTimer } from '../actions/timerActions';
 import mockChrome from '../utils/mockChrome';
@@ -7,6 +8,7 @@ const chrome = typeof window.chrome !== 'undefined' ? window.chrome : mockChrome
 
 const store = configureStore({
   reducer: rootReducer,
+  middleware: thunk,
 });
 
 // Load timer settings from chrome.storage on startup
