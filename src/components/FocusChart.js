@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Chart from 'chart.js/auto';
 import './FocusChart.css';
-import mockChrome from '../utils/mockChrome';
-
-const chrome = typeof window.chrome !== 'undefined' ? window.chrome : mockChrome;
 
 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
