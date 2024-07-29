@@ -12,7 +12,9 @@ const websiteSlice = createSlice({
       state.websites.push(action.payload);
     },
     removeWebsite(state, action) {
-      state.websites = state.websites.filter(website => website !== action.payload);
+      state.websites = state.websites.filter(
+        (website) => website.url !== action.payload.url
+      );
     },
     loadWebsites(state, action) {
       state.websites = action.payload;
