@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+    "name": "TimeSaver",
+    "version": "0.1.0",
+    "permissions": ["activeTab", "tabs", "storage", "alarms", "webNavigation", "webRequest", "scripting"],
+
+    "host_permissions": [
+      "<all_urls>",
+      "http://localhost/*", 
+      "https://your-production-url.com/*"
+    ],
+
+    "background": {
+        "service_worker": "./public/background.js"
+    },
+
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "./public/content.js",
+                "./public/content.css"
+            ],
+            "matches": ["<all_urls>"]
+        }
+    ],
+
+    "action": {
+      "default_popup": "./public/popupIndex.html",
+      "default_title": "TimeSaver",
+      "default_icon": {
+        "16": "./public/images/icon16.png",
+        "24": "./public/images/icon24.png",
+        "32": "./public/images/icon32.png"
+      }
+    },
+
+    "icons": {
+      "16": "./public/images/icon16.png",
+      "48": "./public/images/icon48.png",
+      "128": "./public/images/icon128.png"
+    }
+}
+  

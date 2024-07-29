@@ -1,8 +1,15 @@
+/*
+do the main stuff in focus tab:
+  when startTimer is done in FocusTab
+  
+
+*/
+
 let timerState = {
   focusTime: 25 * 60,
   breakTime: 5 * 60,
   timeLeft: 25 * 60,
-  intervalID: null,
+  BGintervalID: null,
   typeRunning: 0, //0 is focusTime running or paused, 1 is breakTime running or paused
   isRunning: 0, //0 is not running, 1 is running, 2 is paused
 }
@@ -34,10 +41,9 @@ function switchTimer(){
 //starts the timer using set timer to get the vars from storage
 function startTimer(){
   if(timerState.isRunning === 0){
-    getTimer();
-    console.log("interval started in background.js line 11")
-    timerState.intervalID = setInterval(tickTimer, 1000);
-    timerState.isRunning = true;
+    timerState.BGintervalID = setInterval(tickTimer, 1000);
+    timerState.isRunning = 1;
+    timerState.typeRunning = 0;
   }
   else{
     console.log("attempted to start a timer that isn't completely stopped")
@@ -46,10 +52,11 @@ function startTimer(){
 
 //when the timer is stopped, stop the interval and reset time left
 function stopTimer(){
-  if(timerState.intervalID != null){
-    clearInterval(timerState.intervalID);
+  if(timerState.BGintervalID != null){
+    clearInterval(timerState.BGintervalID);
     timerState.isRunning = 0;
     timerState.timeLeft = timerState.focusTime;
+    timerState.BGintervalID = null;
   }
   else{
     console.log("attempted to stop a timer when no timer exists in background.js - line 36");
@@ -57,15 +64,22 @@ function stopTimer(){
 }
 
 function resumeTimer(){
-  console.log("timer resumed");
-  timerState.intervalID = setInterval(tickTimer(), 1000)
+  if(timerState.isRunning === 2) {
+    timerState.BGintervalID = setInterval(tickTimer(), 1000);
+    timerState.isRunning = 1;
+    console.log("timer resumed");
+  }
+  else {
+    console.log("attempted to resume a timer that is not paused");
+  }
 }
 
 //when the timer is paused, stop the interval and save the time remaining
 function pauseTimer(){
-  if(timerState.intervalID != null){
-    clearInterval(timerState.intervalID);
+  if(timerState.BGintervalID != null){
+    clearInterval(timerState.BGintervalID);
     timerState.isRunning = 2; //pause mode
+    timerState.BGintervalID = null;
     console.log("timer paused");
   }
   else{
@@ -75,18 +89,23 @@ function pauseTimer(){
 
 //
 function tickTimer(){
-  timerState.timeLeft =- 1;
+  timerState.timeLeft -= 1;
   if(timerState.timeLeft <= 0) {
     switchTimer();
   }
 }
 
+//sets the timer state in background, this is used right before starting the timer in background or resuming
+//so that it knows how much focus time/break time is left
+function setState(state) {
+  timerState = state;
+}
 
 //send the time left in the timer to other components
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if(request.message === 'setState') {
     console.log('setting the state in background.js');
-    timerState = request.state;
+    setState(request.state);
   }
   if(request.message === 'getState') {
     console.log("asking background.js for state: isRunning, timeLeft e.t.c.");
@@ -94,6 +113,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
   //listen for startTimer and then begin decrementing timer
   else if(request.message === 'startTimer'){
+    console.log('setting the state before starting in background.js');
+    setState(request.state);
     console.log("asking background.js to start timer");
     startTimer();
   }
@@ -103,6 +124,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse(timerState);
   }
   else if(request.message === 'resumeTimer'){
+    //resuming probably doesnt need to set state since background holds the main info of the timer
     console.log("asking background.js to resume timer");
     resumeTimer();
     sendResponse(timerState);

@@ -3,10 +3,14 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: './src/popupIndex.js',
+  entry: {
+    popup: './src/popupIndex.js', // Entry point for the popup
+    background: './public/background.js', // Entry point for the background script
+    content: './public/content.js', // Entry point for the content script
+  },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'popup.bundle.js'
+    filename: '[name].bundle.js' // [name] will be replaced by the key names from entry points
   },
   module: {
     rules: [
@@ -40,11 +44,12 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './public/popupIndex.html',
       filename: 'popup.html',
-      chunks: ['popupIndex']
+      chunks: ['popup'] // Include only popup.bundle.js in popup.html
     }),
     new CopyWebpackPlugin({
       patterns: [
         { from: 'public', to: '', globOptions: { ignore: ['**/popupIndex.html'] } },
+        { from: 'manifest.json', to: '' }, // Ensure manifest.json is copied to the root of dist
       ],
     })
   ],

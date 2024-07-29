@@ -13,12 +13,6 @@ const timerSlice = createSlice({
   name: 'timer',
   initialState,
   reducers: {
-    changeTimerSettings(state, action) {
-      const { focusTime, breakTime } = action.payload;
-      state.focusTime = focusTime;
-      state.breakTime = breakTime;
-      state.timeLeft = focusTime;
-    },
     updateTimer(state, action) {
       const { timerState } = action.payload;
       state.focusTime = timerState.focusTime;
@@ -45,7 +39,6 @@ const timerSlice = createSlice({
       state.isRunning = 1;
     },
     tickTimer(state) {
-      //
       if (state.isRunning === 1) {
         if (state.timeLeft > 0) {
           state.timeLeft -= 1;
@@ -56,7 +49,7 @@ const timerSlice = createSlice({
         } 
         else {
           state.typeRunning = 0;
-          state.timeLeft = state.breakTime;
+          state.timeLeft = state.focusTime;
         }
       }
     },
