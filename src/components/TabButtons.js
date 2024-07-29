@@ -1,28 +1,28 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setActiveTab } from '../actions';
+import { setActiveTab } from '../slices/tabSlice';
 import './TabButtons.css';
 
 function TabButtons() {
-  const activeTab = useSelector((state) => state.tab.activeTab);
+  const currentTab = useSelector((state) => state.tab.currentTab);
   const dispatch = useDispatch();
 
   return (
     <div className="tabs">
       <button
-        className={activeTab === 'home' ? 'active' : 'inactive'}
+        className={currentTab === 'home' ? 'active' : 'inactive'}
         onClick={() => dispatch(setActiveTab('home'))}
       >
         Home
       </button>
       <button
-        className={activeTab === 'focus' ? 'active' : 'inactive'}
+        className={currentTab === 'focus' ? 'active' : 'inactive'}
         onClick={() => dispatch(setActiveTab('focus'))}
       >
         Focus
       </button>
       <button
-        className={activeTab === 'block' ? 'active' : 'inactive'}
+        className={currentTab === 'block' ? 'active' : 'inactive'}
         onClick={() => dispatch(setActiveTab('block'))}
       >
         Block

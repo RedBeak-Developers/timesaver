@@ -8,10 +8,10 @@ import BlockTab from './BlockTab.js';
 import TabButtons from './TabButtons.js';
 
 function Popup() {
-  const activeTab = useSelector((state) => state.tab.activeTab);
+  const currentTab = useSelector((state) => state.tab.currentTab);
 
   const renderTabContent = () => {
-    switch (activeTab) {
+    switch (currentTab) {
       case 'home':
         return <HomeTab />;
       case 'focus':

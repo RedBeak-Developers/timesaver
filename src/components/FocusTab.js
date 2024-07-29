@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { startTimer, stopTimer, updateTimer, changeTimerSettings } from '../actions/timerActions';
+import { startTimer, stopTimer, updateTimer, changeTimerSettings } from '../slices/timerSlice';
 
 function FocusTab() {
   const dispatch = useDispatch();

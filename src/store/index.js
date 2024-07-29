@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { thunk } from 'redux-thunk';
-import tabReducer from '../reducers/tabReducer';
-import websitesReducer from '../reducers/websiteReducer';
-import timerReducer from '../reducers/timerReducer';
+import tabReducer from '../slices/tabSlice';
+import websitesReducer from '../slices/websiteSlice';
+import timerReducer from '../slices/timerSlice';
 
 const store = configureStore({
   reducer: {

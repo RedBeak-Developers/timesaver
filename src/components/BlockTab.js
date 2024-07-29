@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addWebsite, removeWebsite } from '../actions';
+import { addWebsite, removeWebsite } from '../slices/websiteSlice'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import '../utils/icons';
 
