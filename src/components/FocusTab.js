@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { startTimer, stopTimer, updateTimer, changeTimerSettings } from '../slices/timerSlice';
+import { startTimer, stopTimer, updateTimer, changeTimerSettings, resumeTimer, tickTimer } from '../slices/timerSlice';
 
 function FocusTab() {
   const dispatch = useDispatch();
   const { focusTime, breakTime, timeLeft, isRunning, isFocus } = useSelector((state) => state.timer);
+  const [intervalId, setIntervalId] = useState(null);
   //change the state values but dont push to chrome storage until started
   const handleFocusModeChange = (focusTime, breakTime, timeLeft) => {
     changeTimerSettings()
@@ -15,15 +16,35 @@ function FocusTab() {
     chrome.runtime.sendMessage({ message: 'getState'}, (response) => {
       //currently running
       if(response.isRunning === 1) {
-
+        dispatch(resumeTimer());
       }
       //currently paused
       else if(response.isRunning === 2) {
-
+        dispatch();
       }
     });
     dispatch(updateTimer());
   }, [dispatch]);
+
+  //handles timer ticking
+  useEffect(() => {
+    if (isRunning && !intervalId) {
+      const id = setInterval(() => {
+        dispatch(tickTimer());
+      }, 1000);
+      setIntervalId(id);
+    } else if (!isRunning && intervalId) {
+      clearInterval(intervalId);
+      setIntervalId(null);
+    }
+
+    // Cleanup function
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isRunning, intervalId, dispatch]);
 
   //send message to background and change appearance
   const handleStart = () => {
