@@ -1,12 +1,14 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+// Comment out the following line if you prefer not to use the analyzer
+// const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 module.exports = {
   entry: {
-    popup: './src/popupIndex.js', // Entry point for the popup
-    background: './public/background.js', // Entry point for the background script
-    content: './public/content.js', // Entry point for the content script
+    popup: './src/popupIndex.js',
+    background: './src/background.js',
+    content: './src/contentScript.js',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -44,14 +46,16 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './public/popupIndex.html',
       filename: 'popup.html',
-      chunks: ['popup'] // Include only popup.bundle.js in popup.html
+      chunks: ['popup']
     }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: 'public', to: '', globOptions: { ignore: ['**/popupIndex.html'] } },
-        { from: 'manifest.json', to: '' }, // Ensure manifest.json is copied to the root of dist
+        { from: 'public/icons', to: 'icons' }, // Copy icons to the dist/icons directory
+        { from: './manifest.json', to: 'manifest.json' }, // Copy the manifest.json to the root of dist
       ],
-    })
+    }),
+    // Uncomment the following line if you prefer to use the analyzer
+    // new BundleAnalyzerPlugin(),
   ],
   devServer: {
     static: {

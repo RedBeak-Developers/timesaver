@@ -2,9 +2,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  focusTime: 25 * 60, // in seconds
-  breakTime: 5 * 60,  // in seconds
-  timeLeft: 25 * 60,  // in seconds
+  focusTime: 1500, //25*60 in seconds
+  breakTime: 300,  // in seconds
+  timeLeft: 1500,  // in seconds
   typeRunning: 0, // 0 is focusTime, 1 is breakTime
   isRunning: 0, // 0 is not running, 1 is running, 2 is paused
 };
@@ -14,29 +14,28 @@ const timerSlice = createSlice({
   initialState,
   reducers: {
     updateTimer(state, action) {
-      const { timerState } = action.payload;
-      state.focusTime = timerState.focusTime;
-      state.breakTime = timerState.breakTime;
-      state.timeLeft = timerState.timeLeft;
-      state.typeRunning = timerState.typeRunning;
-      state.isRunning = timerState.isRunning;
+      const { focusTime, breakTime, timeLeft, typeRunning, isRunning } = action.payload;
+      state.focusTime = focusTime * 60;
+      state.breakTime = breakTime * 60;
+      state.timeLeft = timeLeft * 60;
+      state.typeRunning = typeRunning;
+      state.isRunning = isRunning;
     },
-    startTimer(state, action) {
-      const { focusTime, breakTime } = action.payload;
-      state.focusTime = focusTime;
-      state.breakTime = breakTime;
-      state.timeLeft = focusTime;
+    startTimer(state) {
       state.typeRunning = 0;
       state.isRunning = 1;
     },
     stopTimer(state) {
       state.isRunning = 0;
+      state.timeLeft = state.focusTime;
     },
     pauseTimer(state) {
+      console.log("attempted to pause timer in ui");
       state.isRunning = 2;
     },
     resumeTimer(state) {
       state.isRunning = 1;
+      console.log("attempted to resume timer in ui");
     },
     tickTimer(state) {
       if (state.isRunning === 1) {

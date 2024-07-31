@@ -9,25 +9,35 @@ function FocusTab() {
 
   //change the state values but dont push to chrome storage until started
   const handleFocusModeChange = (focusTime, breakTime) => {
-    updateTimer(focusTime, breakTime, focusTime, 0, 0);
+    dispatch(updateTimer({
+      'focusTime': focusTime, 
+      'breakTime': breakTime, 
+      'timeLeft': focusTime, 
+      'typeRunning': 0, 
+      'isRunning': 0
+    }));
   };
   
   //on tab switch update
   useEffect(() => {
     //get current timer state from background
     chrome.runtime.sendMessage({ message: 'getState'}, (response) => {
-      //update it in redux
-      dispatch(updateTimer(response.focusTime, response.breakTime, response.timeLeft, response.typeRunning, response.isRunning))
-      //currently running
-      if(response.isRunning === 1) {
-        dispatch(resumeTimer()); //maybe use start here resume should be for pausing and unpausing in tab
-      }
-      //currently paused
-      else if(response.isRunning === 2) {
-        dispatch(pauseTimer());
+      if(response) {
+        response.focusTime = formatTime(response.focusTime);
+        response.breakTime = formatTime(response.breakTime);
+        response.timeLeft = formatTime(response.timeLeft);
+        //update it in redux
+        dispatch(updateTimer(response))
+        //currently running
+        if(response.isRunning === 1) {
+          dispatch(resumeTimer()); //maybe use start here resume should be for pausing and unpausing in tab
+        }
+        //currently paused
+        else if(response.isRunning === 2) {
+          dispatch(pauseTimer());
+        }
       }
     });
-    dispatch(updateTimer());
   }, [dispatch]);
 
   //handles timer ticking
@@ -37,7 +47,7 @@ function FocusTab() {
         dispatch(tickTimer());
       }, 1000);
       setIntervalId(id);
-    } else if (isRunning === 0 && intervalId) {
+    } else if (isRunning !== 1 && intervalId) {
       clearInterval(intervalId);
       setIntervalId(null);
     }
@@ -52,10 +62,15 @@ function FocusTab() {
 
   //send message to background and change appearance
   const handleStart = () => {
-    chrome.runtime.sendMessage({ message: 'startTimer' }, (response) => {
-      console.log(response);
-    });
-    dispatch(startTimer());
+    // Ensure focusTime and breakTime are defined
+    if (focusTime && breakTime) {
+      chrome.runtime.sendMessage({ message: 'startTimer', state: { 'focusTime': focusTime, 'breakTime': breakTime } }, (response) => {
+        console.log(response);
+      });
+      dispatch(startTimer());
+    } else {
+      console.log("focusTime or breakTime is not defined");
+    }
   };
 
   const handleStop = () => {

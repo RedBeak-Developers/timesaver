@@ -1,10 +1,3 @@
-/*
-do the main stuff in focus tab:
-  when startTimer is done in FocusTab
-  
-
-*/
-
 let timerState = {
   focusTime: 25 * 60,
   breakTime: 5 * 60,
@@ -14,14 +7,8 @@ let timerState = {
   isRunning: 0, //0 is not running, 1 is running, 2 is paused
 }
 
-//gets the timer according to what is in chrome.storage
-function getTimer(){
-    chrome.storage.sync.get((result) =>{
-      console.log("set timer in background.js based on chrome storage");
-      timerState.focusTime = result.focusTime;
-      timerState.breakTime = result.breakTime;
-      timerState.timeLeft = result.focusTime;
-    });
+function logTimerState(action) {
+  console.log(`Action: ${action}`, JSON.stringify(timerState));
 }
 
 //switches the timer from focus to break mode or vice versa
@@ -40,6 +27,7 @@ function switchTimer(){
 
 //starts the timer using set timer to get the vars from storage
 function startTimer(){
+  logTimerState('startTimer');
   if(timerState.isRunning === 0){
     timerState.BGintervalID = setInterval(tickTimer, 1000);
     timerState.isRunning = 1;
@@ -65,7 +53,7 @@ function stopTimer(){
 
 function resumeTimer(){
   if(timerState.isRunning === 2) {
-    timerState.BGintervalID = setInterval(tickTimer(), 1000);
+    timerState.BGintervalID = setInterval(tickTimer, 1000);
     timerState.isRunning = 1;
     console.log("timer resumed");
   }
@@ -93,12 +81,16 @@ function tickTimer(){
   if(timerState.timeLeft <= 0) {
     switchTimer();
   }
+  logTimerState('tickTimer')
 }
 
 //sets the timer state in background, this is used right before starting the timer in background or resuming
 //so that it knows how much focus time/break time is left
 function setState(state) {
-  timerState = state;
+  timerState = {
+    ...timerState, // existing properties
+    ...state // new properties to update
+  };
 }
 
 //send the time left in the timer to other components
@@ -106,6 +98,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if(request.message === 'setState') {
     console.log('setting the state in background.js');
     setState(request.state);
+    sendResponse({ status: "success setting state"});
   }
   if(request.message === 'getState') {
     console.log("asking background.js for state: isRunning, timeLeft e.t.c.");
@@ -117,21 +110,23 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     setState(request.state);
     console.log("asking background.js to start timer");
     startTimer();
+    sendResponse({ status: "success starting timer"});
   }
   else if(request.message === 'stopTimer'){
     console.log("asking background.js to stop timer");
     stopTimer();
     sendResponse(timerState);
+    sendResponse({ status: "success stopping timer"});
   }
   else if(request.message === 'resumeTimer'){
     //resuming probably doesnt need to set state since background holds the main info of the timer
     console.log("asking background.js to resume timer");
     resumeTimer();
-    sendResponse(timerState);
+    sendResponse({ status: "success resuming timer"});
   }
   else if(request.message === 'pauseTimer'){
     console.log("asking background.js to pause timer");
     pauseTimer();
-    sendResponse(timerState);
+    sendResponse({ status: "success pausing timer"});
   }
 });
